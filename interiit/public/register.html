@@ -1,6 +1,5 @@
 <form action="/register/" method="post">
     {% csrf_token %}
     {{ form }}
-    <!-- <input type="hidden" name="user_id" value="{{ user.pk }}"> -->
     <input type="submit" value="Submit" />
 </form>

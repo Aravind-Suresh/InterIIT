@@ -46,14 +46,17 @@ def profile_register(request):
 def profile_register_success(request):
 	return render(request, 'registrationSuccess.html', {})
 
-def profile_edit(request):
+def profile_edit(request, profile_id):
 	if request.method == 'POST':
-		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
+		form = ProfileRegistrationForm(request.POST, request.FILES)
 		if form.is_valid():
-			form.save();
+			post = form.save(commit=False)
+			post.user_id = request.user.pk
+			post.save()
 			return HttpResponseRedirect('/profile/list/')	
 	else:
-		profile = Profile.objects.get(pk=request.profile_id)
+		profile = Profile.objects.get(pk=profile_id)
+		print profile
 		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
 
 	return render(request, 'register.html', {'form' : form , 'user' : request.user })

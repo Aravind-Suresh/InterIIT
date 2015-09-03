@@ -1,15 +1,10 @@
-{% if profiles_list.length %}
 	<table>
 		{% for profile in profiles_list %}
 		<tr>
-			{% for key in profile %}
-			<td>{{ key }}</td>
-			{% endfor %}
-			<td><a href = 'profile/edit/{{ profile.pk }}'> Edit </a></td>
-			<td><a href = 'profile/delete/{{ profile.pk }}'> Delete </a></td>
+			<td>{{ profile.first_name }}</td>
+			<td>{{ profile.flast_name }}</td>
+			<td><a href = '/profile/edit/{{ profile.pk }}'> Edit </a></td>
+			<td><a href = '/profile/delete/{{ profile.pk }}'> Delete </a></td>
 		</tr>
 		{% endfor %}
 	</table>
-{% else %}
-	<p> No registrations till now. </p>
-{% endif %}
