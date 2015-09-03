@@ -13,11 +13,11 @@ def login_view(request):
 	if request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
-		#user = User.objects.get(username=username, password=password)
-		user = User.objects.get(pk=1)
+		user = User.objects.get(username=username, password=password)
+		user.backend = 'django.contrib.auth.backends.ModelBackend'
 		print user
 		if user is not None:
-			#login(request, user)
+			login(request, user)
 			return HttpResponseRedirect('/profile/list/')
 		else:
 			return HttpResponseRedirect('/login/')
@@ -33,7 +33,9 @@ def profile_register(request):
 	if request.method == 'POST':
 		form = ProfileRegistrationForm(request.POST, request.FILES)
 		if form.is_valid():
-			context = {}
+			post = form.save(commit=False)
+			post.user_id = request.user.pk
+			post.save()
 			return HttpResponseRedirect('/register/success/')
 	
 	else:
@@ -62,9 +64,7 @@ def profile_delete(request):
 	return render(request, 'profileList.html', { 'profiles_list' : profiles })
 
 def profile_list(request):
-	if request.user is None:
-		user = User.objects.get(pk=1)
-	else:
-		user = request.user
-	profiles = Profile.objects.filter(user=user.pk)
+	user = request.user
+	profiles = Profile.objects.filter(user_id=user.pk)
+	print profiles
 	return render(request, 'profileList.html', { 'profiles_list' : profiles })
