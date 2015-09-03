@@ -41,7 +41,7 @@ def profile_register(request):
 	else:
 		form = ProfileRegistrationForm()
 
-	return render(request, 'register.html', {'form' : form , 'user' : request.user })
+	return render(request, 'register.html', {'form' : form })
 
 def profile_register_success(request):
 	return render(request, 'registrationSuccess.html', {})
@@ -52,8 +52,6 @@ def profile_edit(request, profile_id):
 		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
 		if form.is_valid():
 			post = form.save(commit=False)
-			print "form valid"
-			print post.pk
 			post.user_id = request.user.pk
 			post.save(force_update=True)
 			return HttpResponseRedirect('/profile/list/')	
