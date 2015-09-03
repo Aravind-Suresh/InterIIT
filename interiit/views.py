@@ -7,6 +7,25 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory
 
+from django.contrib.auth import authenticate, login
+
+def login_view(request):
+	if request.method == 'POST':
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(username=username, password=password)
+		if user is not None:
+			login(request, user)
+			return HttpResponseRedirect('/profile/list/')
+		else:
+			return HttpResponseRedirect('/login/')
+	else:
+		return render(request, 'login.html', {})
+
+def logout_view(request):
+	logout(request)
+	return HttpResponseRedirect('/login/')
+
 #@login_required
 def profile_register(request):
 	if request.method == 'POST':
@@ -22,3 +41,24 @@ def profile_register(request):
 
 def profile_register_success(request):
 	return render(request, 'registrationSuccess.html', {})
+
+def profile_edit(request):
+	if request.method == 'POST':
+		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
+		if form.is_valid():
+			form.save();
+			return HttpResponseRedirect('/profile/list/')	
+	else:
+		profile = Profile.objects.get(pk=request.profile_id)
+		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
+
+	return render(request, 'register.html', {'form' : form , 'user' : request.user })
+
+def profile_delete(request):
+	Profile.objects.get(pk=request.profile_id).delete()
+	profiles = Profile.objects.filter(user=request.user)
+	return render(request, 'profileView.html', { profiles_list : profiles })
+
+def profile_list(request):
+	profiles = Profile.objects.filter(user=request.user)
+	return render(request, 'profileView.html', { profiles_list : profiles })
