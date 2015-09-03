@@ -47,24 +47,26 @@ def profile_register_success(request):
 	return render(request, 'registrationSuccess.html', {})
 
 def profile_edit(request, profile_id):
+	profile = Profile.objects.get(pk=profile_id)
 	if request.method == 'POST':
-		form = ProfileRegistrationForm(request.POST, request.FILES)
+		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
 		if form.is_valid():
 			post = form.save(commit=False)
+			print "form valid"
+			print post.pk
 			post.user_id = request.user.pk
-			post.save()
+			post.save(force_update=True)
 			return HttpResponseRedirect('/profile/list/')	
 	else:
-		profile = Profile.objects.get(pk=profile_id)
 		print profile
-		form = ProfileRegistrationForm(request.POST, request.FILES, instance=profile)
+		form = ProfileRegistrationForm(instance=profile)
 
-	return render(request, 'register.html', {'form' : form , 'user' : request.user })
+	return render(request, 'profileEdit.html', {'form' : form , 'profile_id' : profile_id })
 
-def profile_delete(request):
-	Profile.objects.get(pk=request.profile_id).delete()
+def profile_delete(request, profile_id):
+	Profile.objects.get(pk=profile_id).delete()
 	profiles = Profile.objects.filter(user=request.user)
-	return render(request, 'profileList.html', { 'profiles_list' : profiles })
+	return HttpResponseRedirect('/profile/list')
 
 def profile_list(request):
 	user = request.user
