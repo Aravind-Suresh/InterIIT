@@ -13,9 +13,11 @@ def login_view(request):
 	if request.method == 'POST':
 		username = request.POST['username']
 		password = request.POST['password']
-		user = authenticate(username=username, password=password)
+		#user = User.objects.get(username=username, password=password)
+		user = User.objects.get(pk=1)
+		print user
 		if user is not None:
-			login(request, user)
+			#login(request, user)
 			return HttpResponseRedirect('/profile/list/')
 		else:
 			return HttpResponseRedirect('/login/')
@@ -57,8 +59,12 @@ def profile_edit(request):
 def profile_delete(request):
 	Profile.objects.get(pk=request.profile_id).delete()
 	profiles = Profile.objects.filter(user=request.user)
-	return render(request, 'profileView.html', { profiles_list : profiles })
+	return render(request, 'profileList.html', { 'profiles_list' : profiles })
 
 def profile_list(request):
-	profiles = Profile.objects.filter(user=request.user)
-	return render(request, 'profileView.html', { profiles_list : profiles })
+	if request.user is None:
+		user = User.objects.get(pk=1)
+	else:
+		user = request.user
+	profiles = Profile.objects.filter(user=user.pk)
+	return render(request, 'profileList.html', { 'profiles_list' : profiles })

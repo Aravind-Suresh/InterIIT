@@ -1,9 +1,9 @@
-{% if profiles_list.length() %}
+{% if profiles_list.length %}
 	<table>
 		{% for profile in profiles_list %}
 		<tr>
-			{% key in profile %}
-			<td>{{ profile[key] }}</td>
+			{% for key in profile %}
+			<td>{{ key }}</td>
 			{% endfor %}
 			<td><a href = 'profile/edit/{{ profile.pk }}'> Edit </a></td>
 			<td><a href = 'profile/delete/{{ profile.pk }}'> Delete </a></td>
