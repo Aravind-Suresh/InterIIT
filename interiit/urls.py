@@ -20,8 +20,8 @@ from interiit import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^register/$', views.profile_register),
-    url(r'^login/$', views.login_view),
-    url(r'^logout/$', views.logout_view),
+    url(r'^accounts/login/', views.login_view),
+    url(r'^accounts/logout/$', views.logout_view),
     url(r'^register/success/$', views.profile_register_success),
     url(r'^profile/edit/(?P<profile_id>[0-9]+)/$', views.profile_edit),
     url(r'^profile/delete/(?P<profile_id>[0-9]+)/$', views.profile_delete),

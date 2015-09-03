@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 def login_view(request):
 	if request.method == 'POST':
@@ -28,7 +28,7 @@ def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect('/login/')
 
-#@login_required
+@login_required
 def profile_register(request):
 	if request.method == 'POST':
 		form = ProfileRegistrationForm(request.POST, request.FILES)
@@ -46,6 +46,7 @@ def profile_register(request):
 def profile_register_success(request):
 	return render(request, 'registrationSuccess.html', {})
 
+@login_required
 def profile_edit(request, profile_id):
 	profile = Profile.objects.get(pk=profile_id)
 	if request.method == 'POST':
@@ -56,18 +57,18 @@ def profile_edit(request, profile_id):
 			post.save(force_update=True)
 			return HttpResponseRedirect('/profile/list/')	
 	else:
-		print profile
 		form = ProfileRegistrationForm(instance=profile)
 
 	return render(request, 'profileEdit.html', {'form' : form , 'profile_id' : profile_id })
 
+@login_required
 def profile_delete(request, profile_id):
 	Profile.objects.get(pk=profile_id).delete()
 	profiles = Profile.objects.filter(user=request.user)
 	return HttpResponseRedirect('/profile/list')
 
+@login_required
 def profile_list(request):
 	user = request.user
 	profiles = Profile.objects.filter(user_id=user.pk)
-	print profiles
 	return render(request, 'profileList.html', { 'profiles_list' : profiles })
